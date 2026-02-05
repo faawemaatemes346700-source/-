@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لعبة رعب</title>
+
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  background: black;
+  font-family: Arial;
+  touch-action: manipulation;
+}
+
+#game {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle, #111 20%, #000 70%);
+}
+
+#player {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: #0f0;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#enemy {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: red;
+  top: 20px;
+  left: 20px;
+}
+
+#msg {
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  text-align: center;
+  color: red;
+  font-size: 30px;
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div id="game">
+  <div id="player"></div>
+  <div id="enemy"></div>
+  <div id="msg">💀 انتهت اللعبة</div>
+</div>
+
+<script>
+const player = document.getElementById("player");
+const enemy = document.getElementById("enemy");
+const msg = document.getElementById("msg");
+
+let px = window.innerWidth / 2;
+let ex = 20;
+let ey = 20;
+let gameOver = false;
+
+// تحكم لمس
+document.addEventListener("touchstart", e => {
+  if (gameOver) location.reload();
+  let touchX = e.touches[0].clientX;
+  px = touchX - 20;
+  player.style.left = px + "px";
+});
+
+// حركة الوحش
+function moveEnemy() {
+  if (gameOver) return;
+
+  let playerX = player.offsetLeft;
+  let playerY = player.offsetTop;
+
+  if (ex < playerX) ex += 1.5;
+  if (ex > playerX) ex -= 1.5;
+  if (ey < playerY) ey += 1.5;
+  if (ey > playerY) ey -= 1.5;
+
+  enemy.style.left = ex + "px";
+  enemy.style.top = ey + "px";
+
+  // تصادم
+  if (
+    Math.abs(ex - playerX) < 30 &&
+    Math.abs(ey - playerY) < 30
+  ) {
+    gameOver = true;
+    msg.style.display = "block";
+  }
+
+  requestAnimationFrame(moveEnemy);
+}
+
+moveEnemy();
+</script>
+
+</body>
+</html>
